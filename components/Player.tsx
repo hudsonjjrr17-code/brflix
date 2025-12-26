@@ -62,48 +62,58 @@ const Player: React.FC<PlayerProps> = ({ movie, apiKey, onClose, initialSeason =
   // URL atual gerada
   const currentUrl = currentProvider.getUrl(movie.id, movie.imdb_id, mediaType, season, episode);
 
-  // Lógica de Renderização da Dica de Áudio ATUALIZADA
+  // Lógica de Renderização da Dica de Áudio ATUALIZADA para novos players
   const renderAudioTip = () => {
     switch (currentProvider.id) {
+        case 'supertv':
         case 'vocesabia':
-        case 'embedder_pt':
             return (
                 <div className="bg-green-900/40 border border-green-500/50 p-4 rounded-lg flex items-start gap-4">
                     <span className="text-2xl">🇧🇷</span>
                     <div>
-                        <p className="text-green-100 font-bold text-base mb-1">Foco em Áudio em Português</p>
+                        <p className="text-green-100 font-bold text-base mb-1">Foco em Português-BR</p>
                         <p className="text-green-200/90 text-sm">
-                            Este player prioriza o conteúdo dublado ou com legendas em português automaticamente.
+                            Este player é otimizado para encontrar conteúdo dublado ou legendado em português.
                         </p>
                     </div>
                 </div>
             );
-        case 'vidlink':
-            return (
-                <div className="bg-yellow-900/40 border border-yellow-500/50 p-4 rounded-lg flex items-start gap-4 animate-pulse">
-                    <span className="text-2xl">⚙️</span>
-                    <div>
-                        <p className="text-yellow-100 font-bold text-base mb-1">Atenção: Ação Manual Necessária</p>
-                        <p className="text-yellow-200/90 text-sm">
-                            Este player é Dual Áudio. Se estiver em inglês, clique no ícone de <strong>Engrenagem (⚙️)</strong> dentro do vídeo, vá em <strong>Audio</strong> e selecione a opção <span className="text-white font-bold bg-yellow-600/50 px-1 rounded">Portuguese</span>.
-                        </p>
-                    </div>
-                </div>
-            );
-        case '2embed':
+        case 'vidsrc':
             return (
                 <div className="bg-blue-900/40 border border-blue-500/50 p-4 rounded-lg flex items-start gap-4">
-                    <span className="text-2xl">📝</span>
+                    <span className="text-2xl">⚙️</span>
                     <div>
-                        <p className="text-blue-100 font-bold text-base mb-1">Verifique as Opções</p>
+                        <p className="text-blue-100 font-bold text-base mb-1">Player Multi-Servidor</p>
                         <p className="text-blue-200/90 text-sm">
-                            Este player pode ter múltiplas opções de áudio e legenda. Procure pelo ícone de <strong>Engrenagem (⚙️)</strong> ou <strong>CC</strong> para configurar.
+                            Este player carrega de várias fontes. Se o vídeo não funcionar, procure por um botão de <strong>"Fontes"</strong> ou <strong>"Sources"</strong> dentro do player para trocar de servidor.
+                        </p>
+                    </div>
+                </div>
+            );
+        case 'upstream':
+             return (
+                <div className="bg-gray-800/50 border border-gray-600/50 p-4 rounded-lg flex items-start gap-4">
+                    <span className="text-2xl">🔗</span>
+                    <div>
+                        <p className="text-gray-100 font-bold text-base mb-1">Fonte Alternativa</p>
+                        <p className="text-gray-200/90 text-sm">
+                            Uma opção de backup confiável. Pode não ter todas as opções de áudio.
                         </p>
                     </div>
                 </div>
             );
         default:
-            return null;
+            return (
+                 <div className="bg-gray-800/50 border border-gray-600/50 p-4 rounded-lg flex items-start gap-4">
+                    <span className="text-2xl">ℹ️</span>
+                    <div>
+                        <p className="text-gray-100 font-bold text-base mb-1">Dica do Player</p>
+                        <p className="text-gray-200/90 text-sm">
+                           {currentProvider.tip || "Selecione um player para começar a assistir."}
+                        </p>
+                    </div>
+                </div>
+            );
     }
   };
 
@@ -147,29 +157,29 @@ const Player: React.FC<PlayerProps> = ({ movie, apiKey, onClose, initialSeason =
               <div className="flex flex-wrap gap-3">
                 {STREAMING_PROVIDERS.map((provider) => (
                   <button
-                    key={provider.name}
+                    key={provider.id}
                     onClick={() => handleProviderChange(provider)}
                     className={`relative flex flex-col items-start px-4 py-2.5 rounded-lg text-xs font-bold transition-all border w-[140px] md:w-auto ${
-                      currentProvider.name === provider.name
+                      currentProvider.id === provider.id
                         ? 'bg-red-600/20 border-red-500 text-white shadow-[0_0_15px_rgba(220,38,38,0.3)]'
                         : 'bg-[#1f1f1f] border-gray-700 text-gray-400 hover:bg-[#2a2a2a] hover:text-gray-200 hover:border-gray-500'
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-1">
                         {provider.name}
-                        {currentProvider.name === provider.name && (
+                        {currentProvider.id === provider.id && (
                             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.8)]"></span>
                         )}
                     </div>
-                    {/* Badge de Idioma Atualizado */}
+                    {/* Badge de Idioma ATUALIZADO */}
                     <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-                        provider.id === 'vocesabia' || provider.id === 'embedder_pt'
+                        provider.id === 'supertv' || provider.id === 'vocesabia'
                         ? 'bg-green-900/50 text-green-300 border border-green-500/20' 
-                        : provider.id === 'vidlink' 
-                            ? 'bg-yellow-900/50 text-yellow-300 border border-yellow-500/20'
-                            : 'bg-blue-900/50 text-blue-300 border border-blue-500/20'
+                        : provider.id === 'vidsrc'
+                            ? 'bg-blue-900/50 text-blue-300 border border-blue-500/20'
+                            : 'bg-gray-700/50 text-gray-300 border border-gray-600/20'
                     }`}>
-                        {provider.id === 'vocesabia' || provider.id === 'embedder_pt' ? '🇧🇷 Dublado/Auto' : provider.id === 'vidlink' ? '⚙️ Dual Áudio' : '🌐 Multi Opção'}
+                        {provider.id === 'supertv' ? '🇧🇷 Recomendado' : provider.id === 'vocesabia' ? '🇧🇷 Dublado' : provider.id === 'vidsrc' ? '🌐 Multi-Fonte' : '🔗 Alternativo'}
                     </span>
                   </button>
                 ))}

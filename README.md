@@ -18,4 +18,3 @@ View your app in AI Studio: https://ai.studio/apps/drive/15VwTasbK_l2Gjw1O_psrdA
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
-"# brflix" 

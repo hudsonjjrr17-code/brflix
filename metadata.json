@@ -1,0 +1,5 @@
+{
+  "name": "BrFlix",
+  "description": "Uma plataforma moderna de streaming de filmes integrada com TMDB para dados e Google Gemini para recomendações personalizadas.",
+  "requestFramePermissions": []
+}
